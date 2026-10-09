@@ -1,0 +1,14 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Hello Page</title>
+</head>
+<body>
+    <!-- Cách 1: Text tĩnh thuần HTML -->
+    <h1>Hello World!</h1>
+
+    <!-- Cách 2: Lấy dữ liệu động được truyền từ Controller qua cú pháp Thymeleaf -->
+    <h2 th:text="${message}">Nội dung mặc định nếu chưa render</h2>
+</body>
+</html>
