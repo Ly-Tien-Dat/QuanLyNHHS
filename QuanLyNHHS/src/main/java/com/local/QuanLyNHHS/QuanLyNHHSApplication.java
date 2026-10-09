@@ -1,13 +1,13 @@
-package java.local.TestSpringBoot;
+package com.local.QuanLyNHHS;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 
 @SpringBootApplication
-public class TestSpringBootApplication {
+public class QuanLyNHHSApplication {
 
 	public static void main(String[] args) {
-		SpringApplication.run(TestSpringBootApplication.class, args);
+		SpringApplication.run(QuanLyNHHSApplication.class, args);
 	}
 
 }
