@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Quản Lý Phiếu Nhập Hàng - Nhà Hàng Hải Sản</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css" rel="stylesheet">
+</head>
+<body class="bg-light">
+    <!-- Navbar -->
+    <nav class="navbar navbar-expand-lg navbar-dark bg-primary shadow-sm mb-4">
+        <div class="container">
+            <a class="navbar-brand fw-bold" th:href="@{/}"><i class="bi bi-water"></i> Quản Lý Nhà Hàng Hải Sản</a>
+            <div class="navbar-nav ms-auto">
+                <a class="nav-link text-white" th:href="@{/nha-cung-cap}"><i class="bi bi-truck"></i> Nhà Cung Cấp</a>
+                <a class="nav-link text-white" th:href="@{/nguyen-lieu}"><i class="bi bi-box-seam"></i> Kho & Nguyên Liệu</a>
+                <a class="nav-link active fw-semibold" th:href="@{/phieu-nhap}"><i class="bi bi-receipt"></i> Phiếu Nhập</a>
+            </div>
+        </div>
+    </nav>
+
+    <div class="container">
+        <!-- Thông báo flash -->
+        <div th:if="${thongBao}" class="alert alert-success alert-dismissible fade show shadow-sm" role="alert">
+            <i class="bi bi-check-circle-fill me-2"></i><span th:text="${thongBao}"></span>
+            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+        </div>
+        <div th:if="${loi}" class="alert alert-danger alert-dismissible fade show shadow-sm" role="alert">
+            <i class="bi bi-exclamation-triangle-fill me-2"></i><span th:text="${loi}"></span>
+            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+        </div>
+
+        <!-- Header thẻ card -->
+        <div class="card shadow-sm border-0 mb-4">
+            <div class="card-body d-flex flex-wrap justify-content-between align-items-center gap-2">
+                <div>
+                    <h3 class="card-title fw-bold text-primary mb-1"><i class="bi bi-receipt-cutoff"></i> Quản Lý Phiếu Nhập Hàng</h3>
+                    <p class="text-muted mb-0">Theo dõi các đợt nhập hải sản từ nhà cung cấp và tổng giá trị đơn nhập</p>
+                </div>
+                <div class="d-flex gap-2">
+                    <a th:href="@{/phieu-nhap/them}" class="btn btn-success">
+                        <i class="bi bi-plus-circle me-1"></i> Tạo Phiếu Nhập Mới
+                    </a>
+                </div>
+            </div>
+        </div>
+
+        <!-- Thanh lọc theo ngày -->
+        <div class="card shadow-sm border-0 mb-4">
+            <div class="card-body">
+                <form th:action="@{/phieu-nhap/loc}" method="get" class="row g-2 align-items-end">
+                    <div class="col-md-4">
+                        <label class="form-label small fw-semibold text-muted mb-1">Từ ngày</label>
+                        <input type="date" name="tuNgay" class="form-control" th:value="${#dates.format(tuNgay, 'yyyy-MM-dd')}" required>
+                    </div>
+                    <div class="col-md-4">
+                        <label class="form-label small fw-semibold text-muted mb-1">Đến ngày</label>
+                        <input type="date" name="denNgay" class="form-control" th:value="${#dates.format(denNgay, 'yyyy-MM-dd')}" required>
+                    </div>
+                    <div class="col-md-4 d-flex gap-2">
+                        <button type="submit" class="btn btn-primary w-100"><i class="bi bi-funnel"></i> Lọc Phiếu</button>
+                        <a th:href="@{/phieu-nhap}" class="btn btn-outline-secondary" title="Xem tất cả"><i class="bi bi-arrow-clockwise"></i></a>
+                    </div>
+                </form>
+            </div>
+        </div>
+
+        <!-- Bảng danh sách phiếu nhập -->
+        <div class="card shadow-sm border-0">
+            <div class="card-body p-0">
+                <div class="table-responsive">
+                    <table class="table table-hover table-striped align-middle mb-0">
+                        <thead class="table-primary text-nowrap">
+                            <tr>
+                                <th class="text-center" style="width: 80px;">Mã Phiếu</th>
+                                <th>Nhà Cung Cấp</th>
+                                <th>Ngày Nhập</th>
+                                <th class="text-end">Tổng Tiền</th>
+                                <th>Ghi Chú</th>
+                                <th class="text-center" style="width: 160px;">Thao Tác</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr th:if="${#lists.isEmpty(danhSachPN)}">
+                                <td colspan="6" class="text-center py-4 text-muted">
+                                    <i class="bi bi-inbox fs-3 d-block mb-2"></i> Chưa có phiếu nhập hàng nào.
+                                </td>
+                            </tr>
+                            <tr th:each="pn : ${danhSachPN}">
+                                <td class="text-center fw-bold text-primary">#<span th:text="${pn.maPn}"></span></td>
+                                <td class="fw-semibold text-dark" th:text="${pn.nhaCungCap != null ? pn.nhaCungCap.tenNcc : 'N/A'}"></td>
+                                <td>
+                                    <span class="badge bg-light text-dark border">
+                                        <i class="bi bi-calendar3 me-1"></i><span th:text="${#dates.format(pn.ngayNhap, 'dd/MM/yyyy HH:mm')}"></span>
+                                    </span>
+                                </td>
+                                <td class="text-end fw-bold text-success" th:text="${#numbers.formatDecimal(pn.tongTien, 0, 'POINT', 0, 'POINT')} + ' đ'"></td>
+                                <td class="text-muted small" th:text="${pn.ghiChu}"></td>
+                                <td class="text-center">
+                                    <a th:href="@{'/phieu-nhap/chi-tiet/' + ${pn.maPn}}" class="btn btn-sm btn-outline-primary me-1" title="Chi tiết & Thêm hàng">
+                                        <i class="bi bi-eye"></i> Chi Tiết
+                                    </a>
+                                    <a th:href="@{'/phieu-nhap/xoa/' + ${pn.maPn}}" 
+                                       class="btn btn-sm btn-outline-danger" 
+                                       title="Xóa phiếu"
+                                       onclick="return confirm('Bạn có chắc chắn muốn xóa phiếu nhập này? Tồn kho nguyên liệu sẽ được hoàn lại!');">
+                                        <i class="bi bi-trash"></i>
+                                    </a>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>
